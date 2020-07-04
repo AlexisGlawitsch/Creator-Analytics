@@ -99,6 +99,19 @@ export default function FacebookLoginHandler(props) {
           imgUrl={data.picture.data.url}
         />
       )}
+      {window.FB && login && (
+        <button
+          onClick={() => {
+            console.log("Attempting to log out of Facebook account");
+            window.FB.logout((response) => {
+              console.log("Logged out successfully");
+              setLogin(false);
+            });
+          }}
+        >
+          Logout
+        </button>
+      )}
     </div>
   );
 }

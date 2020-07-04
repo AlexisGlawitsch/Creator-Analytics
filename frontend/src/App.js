@@ -12,6 +12,9 @@ function App() {
 
   return (
     <div>
+      <div className="header">
+        <h1>Creator Analytics</h1>
+      </div>
       <div className="App">
         <FacebookLoginHandler setId={setFacebookId} />
       </div>
