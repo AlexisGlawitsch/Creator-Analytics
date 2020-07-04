@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import FacebookLogin from "react-facebook-login";
+import FacebookSignedInDisplay from "./FacebookSignedInDisplay";
 
 function SDKLoader(props) {
   window.fbAsyncInit = function () {
@@ -40,27 +41,27 @@ export default function FacebookLoginHandler(props) {
   const [login, setLogin] = React.useState();
   const [data, setData] = React.useState();
 
-  const checkIfLoggedIn = (response) => {
-    switch (response.status) {
-      case "connected":
-        console.log("Response status: connected");
-        window.FB.api("/me", function (response) {
-          console.log("Successful login for: " + response.name);
-        });
-        setLogin(true);
-        console.log("Set login to true");
-        break;
-      case "not_authorized":
-        console.log("Response status: Not authorized");
-        break;
-      case "unknown":
-        console.log("Unknown");
-        break;
-      default:
-        console.log(response.status);
-        console.log("Response status: Unexpected response status");
-    }
-  };
+  // const checkIfLoggedIn = (response) => {
+  //   switch (response.status) {
+  //     case "connected":
+  //       console.log("Response status: connected");
+  //       window.FB.api("/me", function (response) {
+  //         console.log("Successful login for: " + response.name);
+  //       });
+  //       setLogin(true);
+  //       console.log("Set login to true");
+  //       break;
+  //     case "not_authorized":
+  //       console.log("Response status: Not authorized");
+  //       break;
+  //     case "unknown":
+  //       console.log("Unknown");
+  //       break;
+  //     default:
+  //       console.log(response.status);
+  //       console.log("Response status: Unexpected response status");
+  //   }
+  // };
 
   const statusChangeCallback = (response) => {
     console.log(response);
@@ -85,14 +86,19 @@ export default function FacebookLoginHandler(props) {
           <FacebookLogin
             appId="291539642200299"
             autoLoad={true}
-            fields="id, name, email, picture"
+            fields="id, name, picture"
             callback={statusChangeCallback}
             icon="fa-facebook"
           />
         </div>
       )}
       {/*If the user is logged in, display the account they are logged in as*/}
-      {login && <p>Signed in with Facebook account {data.name}!</p>}
+      {login && (
+        <FacebookSignedInDisplay
+          name={data.name}
+          imgUrl={data.picture.data.url}
+        />
+      )}
     </div>
   );
 }
