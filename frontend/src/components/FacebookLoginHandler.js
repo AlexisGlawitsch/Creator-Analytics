@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import FacebookLogin from "react-facebook-login";
 import FacebookSignedInDisplay from "./FacebookSignedInDisplay";
 
-function SDKLoader(props) {
+function SDKLoader() {
   window.fbAsyncInit = function () {
     window.FB.init({
       appId: "291539642200299",
@@ -26,56 +26,52 @@ function SDKLoader(props) {
     js.src = "https://connect.facebook.net/en_US/sdk.js";
     fjs.parentNode.insertBefore(js, fjs);
   })(document, "script", "facebook-jssdk");
-
-  useEffect(() => {
-    if (window.FB) {
-      props.setLoaded(true);
-    }
-  });
-
-  return null;
 }
 
 export default function FacebookLoginHandler(props) {
-  const [sdkLoaded, setSdkLoaded] = React.useState(false);
+  SDKLoader();
+
   const [login, setLogin] = React.useState();
   const [data, setData] = React.useState();
 
-  // const checkIfLoggedIn = (response) => {
-  //   switch (response.status) {
-  //     case "connected":
-  //       console.log("Response status: connected");
-  //       window.FB.api("/me", function (response) {
-  //         console.log("Successful login for: " + response.name);
-  //       });
-  //       setLogin(true);
-  //       console.log("Set login to true");
-  //       break;
-  //     case "not_authorized":
-  //       console.log("Response status: Not authorized");
-  //       break;
-  //     case "unknown":
-  //       console.log("Unknown");
-  //       break;
-  //     default:
-  //       console.log(response.status);
-  //       console.log("Response status: Unexpected response status");
-  //   }
+  // const checkLoginStatus = () => {
+  //   window.FB.getLoginStatus(function (response) {
+  //     switch (response.status) {
+  //       case "connected":
+  //         console.log("Response status: connected");
+  //         window.FB.api("/me", function (response) {
+  //           console.log("Successful login for: " + response.name);
+  //         });
+  //         setLogin(true);
+  //         console.log("Set login to true");
+  //         break;
+  //       case "not_authorized":
+  //         console.log("Response status: Not authorized");
+  //         break;
+  //       case "unknown":
+  //         console.log("Unknown");
+  //         break;
+  //       default:
+  //         console.log(response.status);
+  //         console.log("Response status: Unexpected response status");
+  //     }
+  //   });
   // };
 
-  const statusChangeCallback = (response) => {
+  const readAccountData = (response) => {
     console.log(response);
     setData(response);
     props.setId(response.id);
 
     if (response.accessToken) {
+      props.setToken(response.accessToken);
       setLogin(true);
     }
   };
 
   return (
     <div>
-      <SDKLoader setLoaded={setSdkLoaded} />
+      {/* {window.FB && !login && checkLoginStatus()} */}
       {/*If the user is not logged in, display login button*/}
       {!login && (
         <div>
@@ -87,30 +83,31 @@ export default function FacebookLoginHandler(props) {
             appId="291539642200299"
             autoLoad={true}
             fields="id, name, picture"
-            callback={statusChangeCallback}
+            callback={readAccountData}
             icon="fa-facebook"
           />
         </div>
       )}
       {/*If the user is logged in, display the account they are logged in as*/}
       {login && (
-        <FacebookSignedInDisplay
-          name={data.name}
-          imgUrl={data.picture.data.url}
-        />
-      )}
-      {window.FB && login && (
-        <button
-          onClick={() => {
-            console.log("Attempting to log out of Facebook account");
-            window.FB.logout((response) => {
-              console.log("Logged out successfully");
-              setLogin(false);
-            });
-          }}
-        >
-          Logout
-        </button>
+        <div>
+          <FacebookSignedInDisplay
+            name={data.name}
+            imgUrl={data.picture.data.url}
+          />
+          <button
+            onClick={() => {
+              console.log("Attempting to log out of Facebook account");
+              window.FB.logout((response) => {
+                console.log("Logged out successfully");
+                setLogin(false);
+                setData({});
+              });
+            }}
+          >
+            Logout
+          </button>
+        </div>
       )}
     </div>
   );
