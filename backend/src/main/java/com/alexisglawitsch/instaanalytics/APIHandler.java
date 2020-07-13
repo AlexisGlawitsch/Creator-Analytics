@@ -1,22 +1,21 @@
 package com.alexisglawitsch.instaanalytics;
 
+import com.alexisglawitsch.instaanalytics.apidata.AccountInfo;
 import com.alexisglawitsch.instaanalytics.apidata.AccountInsights;
 import com.alexisglawitsch.instaanalytics.apidata.MediaInsights;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.alexisglawitsch.instaanalytics.apidata.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.HttpURLConnection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin(origins = { "https://localhost:3000"})
 @RestController
@@ -31,6 +30,12 @@ public class APIHandler {
         this.authRedirectURI = "https://localhost:3000/";
         this.clientId = "3305985632787191";
         this.restTemplate = new RestTemplate();
+    }
+
+    private String buildBasicAccountURI(String userId, String accessToken) {
+        return String.format("https://graph.instagram.com/%s" +
+                "?fields=account_type,username" +
+                "&access_token=%s", userId, accessToken);
     }
 
     private String buildAccountURI(String period) {
@@ -49,19 +54,16 @@ public class APIHandler {
         String uri = "https://api.instagram.com/oauth/access_token";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("client_id", this.clientId);
         requestBody.add("client_secret", "d042740794234aa781fa3f110cdc71a1");
         requestBody.add("code", accessCode.get("code"));
-        logger.info("Logging access code: " + accessCode);
         requestBody.add("grant_type", "authorization_code");
         requestBody.add("redirect_uri", this.authRedirectURI);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(requestBody, headers);
         try {
-            logger.info("Logging entity: " + entity.toString());
             TokenResponse response = restTemplate.postForObject(uri, entity, TokenResponse.class);
 
             logger.info(response.toString());
@@ -72,42 +74,33 @@ public class APIHandler {
         }
     }
 
+    @GetMapping("/account/basic")
+    public AccountInfo getAccountInfo(@RequestParam("userId") String userId,
+                                      @RequestParam("accessToken") String accessToken) {
+//        logger.info(params.toString());
+//        String userId = params.get("params").get("userId");
+//        String accessToken = params.get("params").get("accessToken");
+        logger.info("Received user id " + userId + " and access token " + accessToken);
+        String uri = buildBasicAccountURI(userId, accessToken);
+        logger.info("Attempting to send request to " + uri);
+        AccountInfo info = restTemplate.getForObject(uri, AccountInfo.class);
+        logger.info(info.toString());
+        return info;
+    }
+
+    @GetMapping("/account/insights")
     public AccountInsights getAccountInsights(String period) {
         String uri = buildAccountURI(period);
-        return restTemplate.getForObject(uri, AccountInsights.class);
+        AccountInsights insights = restTemplate.getForObject(uri, AccountInsights.class);
+        logger.info(insights.toString());
+        return insights;
     }
 
+    @GetMapping("/media")
     public MediaInsights getMediaInsights(String mediaId) {
         String uri = buildMediaURI(mediaId);
-        return restTemplate.getForObject(uri, MediaInsights.class);
-    }
-}
-
-class TokenResponse {
-    private String user_id;
-    private String access_token;
-
-    @JsonProperty("user_id")
-    public String getUserId() {
-        return user_id;
-    }
-
-    @JsonProperty("access_token")
-    public String getAccessToken() {
-        return access_token;
-    }
-
-    @JsonProperty("user_id")
-    public void setUserId(String id) {
-        user_id = id;
-    }
-
-    @JsonProperty("access_token")
-    public void setAccessToken(String token) {
-        access_token = token;
-    }
-
-    public String toString() {
-        return "User Id: " + user_id + "\nAccess Token: " + access_token;
+        MediaInsights insights = restTemplate.getForObject(uri, MediaInsights.class);
+        logger.info(insights.toString());
+        return insights;
     }
 }
