@@ -8,6 +8,6 @@ public class InstaAnalyticsController {
     String accountId;
 
     public InstaAnalyticsController() {
-        apiHandler = new APIHandler(accountId);
+        apiHandler = new APIHandler();
     }
 }
