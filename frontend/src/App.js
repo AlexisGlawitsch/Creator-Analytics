@@ -2,26 +2,26 @@ import React, { useEffect } from "react";
 import "./App.css";
 import InstagramSignInPrompt from "./components/InstagramSignInPrompt";
 import SignedInDisplay from "./components/SignedInDisplay.js";
-import { retrieveAccessToken } from "./ApiHandler.js";
+import { retrieveAccountInfo } from "./ApiHandler.js";
 
 export default function App() {
-  const [accessCode, setAccessCode] = React.useState(null);
+  const [accessToken, setAccessToken] = React.useState();
+  const [userId, setUserId] = React.useState();
   const [signedIn, setSignedIn] = React.useState(false);
 
   useEffect(() => {
     // Check for access code in URL
-    if (accessCode == null) {
+    if (!signedIn) {
       const params = new URLSearchParams(window.location.search);
       if (params.has("code")) {
         let code = params.get("code");
 
         console.log(code);
-        retrieveAccessToken(code);
-        setAccessCode(code);
+        retrieveAccountInfo(code, setUserId, setAccessToken);
         setSignedIn(true);
       }
     }
-  }, [accessCode]);
+  }, [signedIn]);
 
   return (
     <div>
