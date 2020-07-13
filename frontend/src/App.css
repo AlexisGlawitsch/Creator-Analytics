@@ -1,25 +1,48 @@
-.App {
-  position: relative;
-  text-align: center;
+html {
+  background-color: rgb(55, 58, 66);
+}
+
+.main {
+  margin: 10px;
+  color: white;
 }
 
 .header {
-  text-align: center;
+  margin: 0px;
+}
+
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .App-link {
   color: #61dafb;
 }
 
-.fb-signed-in {
-  display: flex;
-  flex-direction: row;
-  position: absolute;
-  top: 10px;
-  left: 10px;
+.sign-in-info {
+  text-align: center;
+  width: 400px;
+  margin: 0px;
 }
 
-.fb-signed-in > * {
-  display: block;
-  margin: 10px;
+.account-container {
+  margin-top: 10px;
+}
+
+.signed-in-card {
+  padding: 20px;
+  display: flex;
+  width: 200px;
+}
+
+.signed-in-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-size: 32px;
+  margin: 0px;
 }
