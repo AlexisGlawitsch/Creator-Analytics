@@ -1,20 +1,46 @@
 html {
-  background-color: rgb(55, 58, 66);
+  background-color: lightgray;
 }
 
 .main {
-  margin: 10px;
-  color: white;
+  margin: 0px;
+  font-family: "Open Sans", sans-serif;
+  font-style: normal;
+  font-weight: 300;
 }
 
 .header {
+  padding: 20px;
+  color: white;
+  background-color: #a9a9a9;
+}
+
+.welcome {
   margin: 0px;
+  font-size: 36px;
+}
+
+.subheader {
+  margin: 0px;
+  font-size: 24px;
+}
+
+.footer {
+  padding: 20px;
+  color: black;
+  background-color: #a9a9a9;
 }
 
 .body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+p {
+  margin: 0px;
 }
 
 .App-link {
@@ -29,20 +55,4 @@ html {
 
 .account-container {
   margin-top: 10px;
-}
-
-.signed-in-card {
-  padding: 20px;
-  display: flex;
-  width: 200px;
-}
-
-.signed-in-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.username {
-  font-size: 32px;
-  margin: 0px;
 }

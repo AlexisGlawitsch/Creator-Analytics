@@ -19,17 +19,23 @@ export const retrieveApiParameters = (
     });
 };
 
-export const retrieveAccountInfo = (id, token, setUsername, setAccountType) => {
+export const retrieveAccountInfo = (accessToken, pageId, setUserId) => {
   axios
-    .get(baseUri + "/account/basic", {
-      params: { userId: id, accessToken: token },
-    })
+    .post(baseUri + "/auth", { pageId: pageId, accessToken: accessToken })
     .then((response) => {
       console.log(response);
-      setUsername(response.data.username);
-      setAccountType(response.data.account_type);
+      setUserId(response.data.account_id);
     })
     .catch((error) => {
       console.log(error);
     });
+};
+
+export const retrieveAccountInsights = (id) => {
+  axios
+    .get(baseUri + "/account/insights", { params: { userId: id } })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {});
 };
