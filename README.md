@@ -16,7 +16,7 @@ Below are some rough mockups for what I hope the finished product will look simi
 <img src="https://i.imgur.com/iKJ9gn3.png" width=600px/>
 
 ### Signed In View
-<img src="https://i.imgur.com/TEzLg2Q.png" width=600px/>
+<img src="https://i.imgur.com/7rg8Pai.png" width=600px/>
 
 
 ## Features
