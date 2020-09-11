@@ -23,14 +23,12 @@ import java.util.HashMap;
 @RestController
 public class APIHandler {
     private String accountId;
-    private String clientId;
     private String authRedirectURI;
     private RestTemplate restTemplate;
     private static final Logger logger = LoggerFactory.getLogger(APIHandler.class);
 
     public APIHandler() {
         this.authRedirectURI = "https://localhost:3000/";
-        this.clientId = "3305985632787191";
         this.restTemplate = new RestTemplate();
     }
 
